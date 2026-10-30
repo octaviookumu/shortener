@@ -1,5 +1,8 @@
 package com.octaviookumu.shortener.controller;
 
+import com.octaviookumu.shortener.dto.ShortenUrlRequestDto;
+import com.octaviookumu.shortener.dto.ShortenUrlResponseDto;
+import com.octaviookumu.shortener.entity.UrlEntity;
 import com.octaviookumu.shortener.service.UrlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +18,10 @@ public class UrlController {
     private final UrlService urlService;
 
     @PostMapping("/shorten") // non-idempotent
-    public String shortenUrl(@RequestBody String url) {
-        return urlService.shortenUrl(url);
+    public ShortenUrlResponseDto shortenUrl(@RequestBody ShortenUrlRequestDto requestDto) {
+        // pass requestDto rather than requestDto.url() as that would defeat the purpose of using a dto
+        UrlEntity savedUrlEntity = urlService.shortenUrl(requestDto);
+        return new ShortenUrlResponseDto(savedUrlEntity.getShortCode());
     }
 }
 
