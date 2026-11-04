@@ -17,7 +17,7 @@ public class UrlController {
 
     private final UrlService urlService;
 
-    @PostMapping("/shorten") // non-idempotent
+    @PostMapping("/short-links") // non-idempotent
     public ShortenUrlResponseDto shortenUrl(@RequestBody ShortenUrlRequestDto requestDto) {
         // pass requestDto rather than requestDto.url() as that would defeat the purpose of using a dto
         UrlEntity savedUrlEntity = urlService.shortenUrl(requestDto);

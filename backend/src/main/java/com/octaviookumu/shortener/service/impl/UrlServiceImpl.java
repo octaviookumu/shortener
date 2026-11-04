@@ -6,6 +6,7 @@ import com.octaviookumu.shortener.repository.UrlRepository;
 import com.octaviookumu.shortener.service.UrlService;
 import com.octaviookumu.shortener.util.UrlUtils;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +23,7 @@ public class UrlServiceImpl implements UrlService {
         if (!isValid) {
             throw new RuntimeException("URL is invalid");
         }
-        String shortCode = "TODO";
+        String shortCode = RandomStringUtils.insecure().nextAlphanumeric(8);
         UrlEntity urlEntity = new UrlEntity();
         urlEntity.setMainUrl(url);
         urlEntity.setShortCode(shortCode);
