@@ -10,7 +10,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class UrlServiceImpl implements UrlService {
     @Override
     public UrlEntity shortenUrl(ShortenUrlRequestDto requestDto) {
         var url = requestDto.url();
-        try{
+        try {
 
             boolean isValid = urlUtils.isValid(url);
             if (!isValid) {
@@ -33,7 +35,7 @@ public class UrlServiceImpl implements UrlService {
             urlEntity.setMainUrl(url);
             urlEntity.setShortCode(shortCode);
             return urlRepository.save(urlEntity);
-        }catch (DataIntegrityViolationException ex){
+        } catch (DataIntegrityViolationException ex) {
             // a round trip done only when the shortcode url already exists in db (SQLIntegrityConstraintViolationException)
             String shortCode = RandomStringUtils.insecure().nextAlphanumeric(8);
             UrlEntity urlEntity = new UrlEntity();
@@ -41,5 +43,12 @@ public class UrlServiceImpl implements UrlService {
             urlEntity.setShortCode(shortCode);
             return urlRepository.save(urlEntity);
         }
+    }
+
+    @Override
+    public URI getDirectionUri(String shortCode) {
+        String urlToBeParsed = urlRepository.findMainUrlByShortCode(shortCode)
+                .orElse("/");
+        return URI.create(urlToBeParsed);
     }
 }
