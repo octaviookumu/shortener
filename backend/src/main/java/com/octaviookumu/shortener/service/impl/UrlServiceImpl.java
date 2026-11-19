@@ -7,7 +7,10 @@ import com.octaviookumu.shortener.service.UrlService;
 import com.octaviookumu.shortener.util.UrlUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,14 +22,24 @@ public class UrlServiceImpl implements UrlService {
     @Override
     public UrlEntity shortenUrl(ShortenUrlRequestDto requestDto) {
         var url = requestDto.url();
-        boolean isValid = urlUtils.isValid(url);
-        if (!isValid) {
-            throw new RuntimeException("URL is invalid");
+        try{
+
+            boolean isValid = urlUtils.isValid(url);
+            if (!isValid) {
+                throw new RuntimeException("URL is invalid");
+            }
+            String shortCode = RandomStringUtils.insecure().nextAlphanumeric(8);
+            UrlEntity urlEntity = new UrlEntity();
+            urlEntity.setMainUrl(url);
+            urlEntity.setShortCode(shortCode);
+            return urlRepository.save(urlEntity);
+        }catch (DataIntegrityViolationException ex){
+            // a round trip done only when the shortcode url already exists in db (SQLIntegrityConstraintViolationException)
+            String shortCode = RandomStringUtils.insecure().nextAlphanumeric(8);
+            UrlEntity urlEntity = new UrlEntity();
+            urlEntity.setMainUrl(url);
+            urlEntity.setShortCode(shortCode);
+            return urlRepository.save(urlEntity);
         }
-        String shortCode = RandomStringUtils.insecure().nextAlphanumeric(8);
-        UrlEntity urlEntity = new UrlEntity();
-        urlEntity.setMainUrl(url);
-        urlEntity.setShortCode(shortCode);
-        return urlRepository.save(urlEntity);
     }
 }
