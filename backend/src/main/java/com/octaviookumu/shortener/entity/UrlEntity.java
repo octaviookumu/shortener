@@ -3,6 +3,9 @@ package com.octaviookumu.shortener.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -20,4 +23,8 @@ public class UrlEntity {
 
     @Column(name = "shortCode", unique = true)
     private String shortCode;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

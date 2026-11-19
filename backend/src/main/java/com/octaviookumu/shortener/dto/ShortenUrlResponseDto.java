@@ -1,6 +1,7 @@
 package com.octaviookumu.shortener.dto;
 
 public record ShortenUrlResponseDto(
-        String shortCode
+        String shortCode,
+        String mainUrl
 ) {
 }

@@ -8,6 +8,8 @@ import com.octaviookumu.shortener.util.UrlUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -50,5 +52,10 @@ public class UrlServiceImpl implements UrlService {
         String urlToBeParsed = urlRepository.findMainUrlByShortCode(shortCode)
                 .orElse("/");
         return URI.create(urlToBeParsed);
+    }
+
+    @Override
+    public Page<UrlEntity> getShortenedUrls(Pageable pageable) {
+        return urlRepository.findAll(pageable);
     }
 }
